@@ -1,0 +1,11 @@
+# Frida specifications folder
+.frida-specs/**
+
+
+# Node.js
+node_modules/
+frontend/node_modules/
+
+# Build folders
+dist/
+build/

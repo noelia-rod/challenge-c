@@ -1,0 +1,20 @@
+{
+  "name": "gestor-solicitudes-internas",
+  "version": "1.0.0",
+  "description": "MVP - Gestor de Solicitudes Internas",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names \"backend,frontend\" --prefix-colors \"cyan,magenta\" \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "install:all": "npm install --workspaces",
+    "build:frontend": "npm run build --workspace=frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
