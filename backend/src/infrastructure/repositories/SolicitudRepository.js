@@ -56,7 +56,7 @@ class SolicitudRepository extends ISolicitudRepository {
 
   // ── Interface implementation ─────────────────────────────────────────────────
 
-  async findAll(filters = {}) {
+  async findAll(filters = {}, pagination = {}) {
     const conditions = [];
     const params = [];
 
@@ -74,10 +74,30 @@ class SolicitudRepository extends ISolicitudRepository {
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const sql = `${this._baseSelectQuery()} ${where} ORDER BY s.fecha_creacion DESC`;
+
+    // Count query (same filters, no pagination)
+    const countSql = `SELECT COUNT(*)::int AS total FROM solicitudes s ${where}`;
+    const countResult = await query(countSql, params);
+    const totalItems = countResult.rows[0].total;
+
+    // Pagination
+    const page = Math.max(1, parseInt(pagination.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(pagination.limit, 10) || 10));
+    const offset = (page - 1) * limit;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    params.push(limit);
+    const limitPlaceholder = `$${params.length}`;
+    params.push(offset);
+    const offsetPlaceholder = `$${params.length}`;
+
+    const sql = `${this._baseSelectQuery()} ${where} ORDER BY s.fecha_creacion DESC LIMIT ${limitPlaceholder} OFFSET ${offsetPlaceholder}`;
 
     const result = await query(sql, params);
-    return result.rows.map((row) => this._mapRow(row));
+    return {
+      data: result.rows.map((row) => this._mapRow(row)),
+      pagination: { page, limit, totalItems, totalPages },
+    };
   }
 
   async findById(id) {

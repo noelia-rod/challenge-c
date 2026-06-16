@@ -39,8 +39,12 @@ const getSolicitudes = async (req, res, next) => {
       urgencia: req.query.urgencia || null,
       estado: req.query.estado || null,
     };
-    const solicitudes = await getSolicitudesUseCase.execute(filters);
-    success(res, solicitudes);
+    const pagination = {
+      page: req.query.page || 1,
+      limit: req.query.limit || 10,
+    };
+    const result = await getSolicitudesUseCase.execute(filters, pagination);
+    success(res, result);
   } catch (err) {
     next(err);
   }

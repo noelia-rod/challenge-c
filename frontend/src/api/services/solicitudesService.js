@@ -1,12 +1,15 @@
 import apiClient from '../apiClient';
 
 const solicitudesService = {
-  getAll: async (filters = {}) => {
+  getAll: async (filters = {}, pagination = {}) => {
     const params = {};
-    if (filters.tipo_solicitud_id) params.tipo_solicitud_id = filters.tipo_solicitud_id;
+    if (filters.tipo_solicitud_id) params.tipo = filters.tipo_solicitud_id;
     if (filters.urgencia) params.urgencia = filters.urgencia;
     if (filters.estado) params.estado = filters.estado;
+    if (pagination.page) params.page = pagination.page;
+    if (pagination.limit) params.limit = pagination.limit;
     const response = await apiClient.get('/solicitudes', { params });
+    // API returns { data: { data: [...], pagination: {...} } }
     return response.data.data;
   },
 

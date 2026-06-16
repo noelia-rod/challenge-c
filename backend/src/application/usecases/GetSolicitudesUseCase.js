@@ -14,10 +14,13 @@ class GetSolicitudesUseCase {
    * @param {number} [filters.tipo_solicitud_id]
    * @param {string} [filters.urgencia]
    * @param {string} [filters.estado]
-   * @returns {Promise<import('../../domain/entities/Solicitud')[]>}
+   * @param {object} pagination
+   * @param {number} [pagination.page]
+   * @param {number} [pagination.limit]
+   * @returns {Promise<{ data: import('../../domain/entities/Solicitud')[], pagination: object }>}
    */
-  async execute(filters = {}) {
-    return this.solicitudRepository.findAll(filters);
+  async execute(filters = {}, pagination = {}) {
+    return this.solicitudRepository.findAll(filters, pagination);
   }
 }
 
